@@ -1,17 +1,34 @@
 ---
 dependency:
-  name: gilt
+  name: galaxy
 driver:
   name: docker
+{%- if cookiecutter.enable_openshift_testing -%}
+  safe_files:
+    - .molecule/files
+{%- endif -%}
 lint:
   name: yamllint
 platforms:
-  - name: instance-1
+  - name: instance
+{%- if cookiecutter.enable_openshift_testing -%}
+    image: centos/systemd
+    volumes:
+      - '/run/docker.sock:/run/docker.sock:rw'
+      - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+    command: /usr/sbin/init
+    privileged: 'True'
+{%- else -%}
     image: centos:7
+{%- endif -%}
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+{%- if cookiecutter.enable_openshift_testing -%}
+  env:
+    ANSIBLE_ROLES_PATH: ops_roles:tools_roles:private_roles
+{%- endif -%}
 scenario:
   name: {{ cookiecutter.scenario_name }}
 verifier:

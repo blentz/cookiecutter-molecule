@@ -1,0 +1,5 @@
+[openshift-origin]
+baseurl = http://mirror.centos.org/centos/$releasever/paas/$basearch/openshift-origin/
+enabled = 1
+gpgcheck = 0
+name = CentOS OpenShift Origin

@@ -2,4 +2,45 @@
 - name: Prepare
   hosts: all
   gather_facts: False
+{%- if cookiecutter.enable_openshift_testing != "False" -%}
+{% raw %}
+  tasks:
+    - name: set fact
+      set_fact:
+        clusterid: "origin-test-cluster"
+        oc_cluster_up_flags: ""
+
+    - name: origin setup block
+      block:
+        - name: create test cluster
+          command: "/usr/bin/oc cluster up {{ oc_cluster_up_flags }}"
+        - name: login as admin
+          command: "/usr/bin/oc login -u system:admin"
+
+    # ensure we can access the origin container
+    - name: add origin host to inventory
+      add_host:
+        name: "origin"
+        groups:
+          - "oo_clusterid_{{ clusterid }}"
+          - "oo_hosttype_compute_node"
+          - "oo_hosttype_infra_node"
+          - "oo_hosttype_master"
+        ansible_connection: docker
+
+    # example:
+    #
+    # # delegate block - tasks that need to run on the origin master
+    # - name: delegate block
+    #   block:
+    #     # role dep - needed for lib_openshift
+    #     - name: install yaml
+    #       package:
+    #         name: PyYAML
+    #         state: present
+    #   delegate_to: origin
+    #   # end delegate block
+{% endraw %}
+{% else %}
   tasks: []
+{%- endif -%}

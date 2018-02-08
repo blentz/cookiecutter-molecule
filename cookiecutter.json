@@ -4,6 +4,11 @@
     "author": "your name",
     "description": "your description",
     "company": "your company (optional)",
-    "license": ["BSD", "MIT", "GPLv2", "GPLv3", "Apache", "CC-BY"],
-    "min_ansible_version": 1.2
+    "license": ["Apache", "BSD", "GPLv2", "GPLv3", "MIT", "CC-BY"],
+    "copyright_year": 2018,
+    "min_ansible_version": 2.0,
+    "enable_openshift_testing": "False",
+    "tools_roles_path": "",
+    "ops_roles_path": "",
+    "private_roles_path": ""
 }

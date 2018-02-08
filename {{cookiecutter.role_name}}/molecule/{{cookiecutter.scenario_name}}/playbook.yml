@@ -1,5 +1,37 @@
 ---
 - name: Converge
   hosts: all
-  roles:
-    - role: {{ cookiecutter.role_name }}
+  tasks:
+{%- if cookiecutter.enable_openshift_testing != "False" -%}
+{% raw %}
+    - name: set fact
+      set_fact:
+        clusterid: "origin-test-cluster"
+
+    # ensure we can access the origin container
+    - name: add origin host to inventory
+      add_host:
+        name: "origin"
+        groups:
+          - "oo_clusterid_{{ clusterid }}"
+          - "oo_hosttype_compute_node"
+          - "oo_hosttype_infra_node"
+          - "oo_hosttype_master"
+        ansible_connection: docker
+
+    # add role dependencies here
+    #
+    # example:
+    # - name: include lib_openshift role
+    #   include_role:
+    #     name: tools_roles/lib_openshift
+
+    - name: include role to be tested
+      include_role:
+        name: {{ cookiecutter.role_name }}
+      delegate_to: origin
+{% endraw %}
+{% else %}
+    - include_role:
+        name: {{ cookiecutter.role_name }}
+{%- endif -%}
