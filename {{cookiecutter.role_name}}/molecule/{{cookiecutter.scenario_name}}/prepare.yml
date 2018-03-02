@@ -40,7 +40,7 @@
     #         state: present
     #   delegate_to: origin
     #   # end delegate block
-{% endraw %}
+{%- endraw %}
 {% else %}
   tasks: []
 {%- endif -%}

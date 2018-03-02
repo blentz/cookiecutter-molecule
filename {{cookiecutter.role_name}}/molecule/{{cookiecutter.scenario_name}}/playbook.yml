@@ -2,8 +2,8 @@
 - name: Converge
   hosts: all
   tasks:
-{%- if cookiecutter.enable_openshift_testing != "False" -%}
-{% raw %}
+{%- if cookiecutter.enable_openshift_testing != "False" %}
+{%- raw %}
     - name: set fact
       set_fact:
         clusterid: "origin-test-cluster"
@@ -25,12 +25,11 @@
     # - name: include lib_openshift role
     #   include_role:
     #     name: tools_roles/lib_openshift
-
+{% endraw %}
     - name: include role to be tested
       include_role:
         name: {{ cookiecutter.role_name }}
       delegate_to: origin
-{% endraw %}
 {% else %}
     - include_role:
         name: {{ cookiecutter.role_name }}
