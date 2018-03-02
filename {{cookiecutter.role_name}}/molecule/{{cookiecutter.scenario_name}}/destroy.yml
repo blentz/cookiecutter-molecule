@@ -1,17 +1,5 @@
 ---
 {% raw -%}
-- name: Destroy origin cluster
-  hosts: instance
-  gather_facts: false
-  no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
-  vars:
-    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
-  tasks:
-    - name: shut down origin cluster
-      command: '/usr/bin/oc cluster down'
-      ignore_errors: 'yes'
-
 - name: Teardown
   hosts: localhost
   connection: local
@@ -21,6 +9,20 @@
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
+    # FIXME: This won't scale.
+    # FIXME: This will kill all origin containers on this host,
+    # FIXME: including containers we did not create.
+    - name: check for origin instances
+      command: docker ps -q -f name=k8s -f name=origin
+      register: docker_ps_result
+
+    - name: Destroy origin instance(s)
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+        force_kill: True
+      with_items: "{{ docker_ps_result.stdout_lines }}"
+
     - name: Destroy molecule instance(s)
       docker_container:
         name: "{{ item.name }}"
