@@ -1,5 +1,17 @@
 ---
 {% raw -%}
+- name: Destroy origin cluster
+  hosts: instance
+  gather_facts: false
+  no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
+  vars:
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+  tasks:
+    - name: shut down origin cluster
+      command: '/usr/bin/oc cluster down'
+      ignore_errors: 'yes'
+
 - name: Teardown
   hosts: localhost
   connection: local
