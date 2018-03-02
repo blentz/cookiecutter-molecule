@@ -16,6 +16,12 @@
           command: "/usr/bin/oc cluster up {{ oc_cluster_up_flags }}"
         - name: login as admin
           command: "/usr/bin/oc login -u system:admin"
+        - name: wait for cluster to stabilize
+          command: docker ps -q -f name=k8s -f name=origin
+          register: docker_ps_result
+          until: docker_ps_result.stdout_lines | length >= 5
+          retries: 5
+          delay: 10
 
     # ensure we can access the origin container
     - name: add origin host to inventory
