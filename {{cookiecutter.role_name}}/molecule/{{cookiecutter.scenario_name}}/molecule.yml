@@ -31,6 +31,21 @@ provisioner:
 {%- endif %}
 scenario:
   name: {{ cookiecutter.scenario_name }}
+{%- if cookiecutter.enable_openshift_testing %}
+  test_sequence:
+    - lint
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    # This role is not idempotent.
+    # - idempotence
+    - side_effect
+    - verify
+    - destroy
+{%- endif %}
 verifier:
   name: testinfra
   lint:
