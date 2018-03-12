@@ -12,5 +12,5 @@ RUN /bin/sh -c 'if [ -x "$(command -v emerge)" ]; then emerge --ask n =dev-lang/
 {%- if cookiecutter.enable_openshift_testing != "False" %}
 # add openshift origin repo & install origin client
 ADD files/openshift-origin.repo /etc/yum.repos.d
-RUN yum install -y python-ruamel-yaml origin-clients && yum clean all
+RUN yum install -y python-ruamel-yaml origin-clients docker-client && yum clean all
 {%- endif %}
