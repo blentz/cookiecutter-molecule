@@ -46,6 +46,16 @@
     #       package:
     #         name: PyYAML
     #         state: present
+    #     # link to origin master files
+    #     - name: mock out etc files
+    #       file:
+    #         path: "/etc/origin"
+    #         state: directory
+    #     - name: mock out etc files
+    #       file:
+    #         dest: "/etc/origin/master"
+    #         src: "/var/lib/origin/openshift.local.config/master"
+    #         state: link
     #   delegate_to: origin
     #   # end delegate block
 {%- endraw %}
